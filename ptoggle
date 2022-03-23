@@ -6,28 +6,26 @@ OffOn() {
     setsid -f picom $1 --experimental-backends
 }
 
-while getopts ":okesn" option; do
-    case $option in
-        o) #Off and On
-            OffOn
-            exit ;;
-        k) #Kill
-            killall picom 
-            exit ;;
-        e) #Start with Experimental
-            setsid -f picom --experimental-backends 
-            exit;;
-        s) #Start with legacy
-            setsid -f picom 
-            exit ;;
-        n) #Start with no Vsync and Experimental
-            OffOn --no-vsync
-            exit;;
-        \?) # Invalid option
-            echo "Error: Invalid option"
-            exit;;
-    esac
-done
+case $1 in
+    -o) #Off and On
+        OffOn
+        exit ;;
+    -k) #Kill
+        killall picom 
+        exit ;;
+    -e) #Start with Experimental
+        setsid -f picom --experimental-backends 
+        exit;;
+    -s) #Start with legacy
+        setsid -f picom 
+        exit ;;
+    -n) #Start with no Vsync and Experimental
+        OffOn --no-vsync
+        exit;;
+    \?) # Invalid option
+        echo "Error: Invalid option"
+        exit;;
+esac
 
 
 if pgrep -x 'picom' > /dev/null ; then
