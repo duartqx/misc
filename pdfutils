@@ -1,0 +1,52 @@
+#!/usr/bin/env bash
+
+UND=`tput smul`
+NOUND=`tput rmul`
+BLD=`tput bold`
+NRML=`tput sgr0`
+
+pdfcompress() {
+    # Compress image based PDF size
+    gs -sDEVICE=pdfwrite \
+       -dCompatibilityLevel=1.4 \
+       -dDownsampleColorImages=true \
+       -dColorImageResolution=132 \
+       -dNOPAUSE -dBATCH \
+       -sOutputFile=${1}_compressed_$(date +%s) \
+       "$1" # The input file to be compressed
+}
+
+pdfsplit() {
+    gs -sDEVICE=pdfwrite \
+       -dNOPAUSE -dBATCH -dSAFER \
+       -dFirstPage=${2} \
+       -dLastPage=${3} \
+       -sOutputFile=${1%.pdf}_p${2}-p${3}.pdf \
+       ${1} # The input file to be split
+}
+
+
+case $1 in
+    -c)
+        shift; pdfcompress $1 ;;
+    -e) 
+        shift
+        pdftoppm -png $1 ${1%.pdf} ;;
+    -s) 
+        shift; pdfsplit $@ ;;
+    -h|*) 
+        cat << _EOF
+${BLD}NAME${NRML}
+    pdfutils - Simple script to interact with Ghostscript and pdftoppm
+
+${BLD}OPTIONS${NRML}
+    -c ${UND}pdf-file${NOUND}
+        Compress an image based pdf file
+    -e ${UND}pdf-file${NOUND}
+        Extracts all pages as png files
+    -s ${UND}pdf-file${NOUND} ${UND}first page of range${NOUND} ${UND}last page of range${NOUND}
+        Splits a pdf file based on specified first and last page range into a new pdf file" 
+
+_EOF
+
+esac
