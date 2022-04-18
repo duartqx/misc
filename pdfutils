@@ -54,7 +54,7 @@ case $1 in
     -h|--help) 
         cathelp ;;
     *)
-        echo 'Invalid Option'
+        echo -e 'Invalid Option\n'
         cathelp
         exit 1 ;;
 esac
