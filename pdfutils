@@ -27,10 +27,10 @@ pdfsplit() {
 
 cathelp() {
     cat << _EOF
-D}NAME${NRML}
+${UND}NAME${NRML}
 pdfutils - Simple script to interact with Ghostscript and pdftoppm
 
-D}OPTIONS${NRML}
+${UND}OPTIONS${NRML}
 -c|--compress ${UND}pdf-file${NOUND}
     Compress an image based pdf file
 -e|--extract ${UND}pdf-file${NOUND}
