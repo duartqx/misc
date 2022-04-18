@@ -25,28 +25,36 @@ pdfsplit() {
        ${1} # The input file to be split
 }
 
+cathelp() {
+    cat << _EOF
+D}NAME${NRML}
+pdfutils - Simple script to interact with Ghostscript and pdftoppm
 
-case $1 in
-    -c)
-        shift; pdfcompress $1 ;;
-    -e) 
-        shift
-        pdftoppm -png $1 ${1%.pdf} ;;
-    -s) 
-        shift; pdfsplit $@ ;;
-    -h|*) 
-        cat << _EOF
-${BLD}NAME${NRML}
-    pdfutils - Simple script to interact with Ghostscript and pdftoppm
-
-${BLD}OPTIONS${NRML}
-    -c ${UND}pdf-file${NOUND}
-        Compress an image based pdf file
-    -e ${UND}pdf-file${NOUND}
-        Extracts all pages as png files
-    -s ${UND}pdf-file${NOUND} ${UND}first page of range${NOUND} ${UND}last page of range${NOUND}
-        Splits a pdf file based on specified first and last page range into a new pdf file" 
+D}OPTIONS${NRML}
+-c|--compress ${UND}pdf-file${NOUND}
+    Compress an image based pdf file
+-e|--extract ${UND}pdf-file${NOUND}
+    Extracts all pages as png files
+-s|--split ${UND}pdf-file${NOUND} ${UND}first page of range${NOUND} ${UND}last page of range${NOUND}
+    Splits a pdf file based on specified first and last page range into a new pdf file" 
+-h|--help
+    Prints this help
 
 _EOF
+}
 
+case $1 in
+    -c|--compress)
+        shift; pdfcompress $1 ;;
+    -e|--extract) 
+        shift
+        pdftoppm -png $1 ${1%.pdf} ;;
+    -s|--split) 
+        shift; pdfsplit $@ ;;
+    -h|--help) 
+        cathelp ;;
+    *)
+        echo 'Invalid Option'
+        cathelp
+        exit 1 ;;
 esac
