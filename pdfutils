@@ -1,5 +1,6 @@
 #!/usr/bin/env bash
 
+OPT=$1
 UND=`tput smul`
 NOUND=`tput rmul`
 BLD=`tput bold`
@@ -12,7 +13,7 @@ pdfcompress() {
        -dDownsampleColorImages=true \
        -dColorImageResolution=132 \
        -dNOPAUSE -dBATCH \
-       -sOutputFile=${1}_compressed_$(date +%s) \
+       -sOutputFile=${1%.pdf}_compressed_$(date +%s).pdf \
        "$1" # The input file to be compressed
 }
 
@@ -22,7 +23,7 @@ pdfsplit() {
        -dFirstPage=${2} \
        -dLastPage=${3} \
        -sOutputFile=${1%.pdf}_p${2}-p${3}.pdf \
-       ${1} # The input file to be split
+       "$1" # The input file to be split
 }
 
 cathelp() {
@@ -43,14 +44,16 @@ ${UND}OPTIONS${NRML}
 _EOF
 }
 
-case $1 in
+# Shifts the arguments by one and makes $2 the $1
+shift
+
+case $OPT in
     -c|--compress)
-        shift; pdfcompress $1 ;;
+        pdfcompress $1 ;;
     -e|--extract) 
-        shift
         pdftoppm -png $1 ${1%.pdf} ;;
     -s|--split) 
-        shift; pdfsplit $@ ;;
+        pdfsplit $@ ;;
     -h|--help) 
         cathelp ;;
     *)
