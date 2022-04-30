@@ -1,10 +1,22 @@
 #!/usr/bin/env bash
 
-OPT=$1
 UND=`tput smul`
 NOUND=`tput rmul`
 BLD=`tput bold`
 NRML=`tput sgr0`
+
+spinner() {
+    # Prints a spinning line symbolizing that it's working
+    PID=$!
+    i=1
+    sp="/-\|"
+    echo -n ' '
+    while [ -d /proc/$PID ]; do
+        sleep 0.55
+        printf "\b${sp:i++%${#sp}:1}"
+    done
+    printf "\bDone\n"
+}
 
 pdfcompress() {
     # Compress image based PDF size
@@ -45,15 +57,19 @@ _EOF
 }
 
 # Shifts the arguments by one and makes $2 the $1
+OPT=$1
 shift
 
 case $OPT in
     -c|--compress)
-        pdfcompress $1 ;;
+        pdfcompress $1 & spinner ;;
     -e|--extract) 
-        pdftoppm -png $1 ${1%.pdf} ;;
+        if [[ $1 =~ \.pdf$ ]]; then
+            echo 'Extracting png images from the input file'
+            pdftoppm -png $1 ${1%.pdf} & spinner
+        fi ;;
     -s|--split) 
-        pdfsplit $@ ;;
+        pdfsplit $@ & spinner ;;
     -h|--help) 
         cathelp ;;
     *)
