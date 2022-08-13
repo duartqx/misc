@@ -1,37 +1,25 @@
 #!/usr/bin/env bash
 
-PicomRestart() {
-    killall picom 
-    sleep 0.1
-    setsid -f picom $1 --experimental-backends
+Picom() {
+    setsid -f picom --experimental-backends $@
 }
-if [[ -n $1 ]]; then
-    case $1 in
-        -o|-r) 
-            PicomRestart
-            exit ;;
-        -k) 
+
+PicomRestart() {
+    killall -q picom
+    sleep 0.1
+    Picom $@
+}
+
+case $1 in
+    #-e) Picom --experimental-backends ;; # Experimental
+    -k) killall picom ;; #Kills picom 
+    -l) setsid -f picom ;; #Start with legacy backend
+    -n) PicomRestart --no-vsync ;; # No v-sync
+    -r) PicomRestart ;; # Restarts
+    '') if pgrep -x 'picom' >/dev/null ; then
             killall picom
-            exit ;;
-        -e) #Start with Experimental
-            setsid -f picom --experimental-backends 
-            exit;;
-        -s|-l) #Start with legacy
-            setsid -f picom
-            exit ;;
-        -n) #Start with no Vsync and Experimental
-            OffOn --no-vsync
-            exit ;;
-        \?) # Invalid option
-            echo "Error: Invalid option"
-            exit 1 ;;
-    esac
-
-else
-
-    if pgrep -x 'picom' > /dev/null ; then
-        killall picom
-    else
-        setsid -f picom --experimental-backends
-    fi
-fi
+        else
+            Picom
+        fi ;; #Toggle
+    \?) echo "Error: Invalid option"; exit 1 ;;
+esac
