@@ -40,10 +40,10 @@ def main() -> None:
                 sysexit(1)
     except IndexError:
         print('''Usage:
-            checkgains --check
-                prints out the dolar exchange rate for today in brl
-            checkgains [number|int|float]
-                prints out the gains calculated with today's exchange rate ''')
+checkgains --check
+    prints out the dolar exchange rate for today in brl
+checkgains [number|int|float]
+    prints out the gains calculated with today's exchange rate ''')
 
 if __name__ == '__main__':
     
