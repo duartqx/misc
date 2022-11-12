@@ -14,7 +14,7 @@ case $1 in
     #-e) Picom --experimental-backends ;; # Experimental
     -k) killall picom ;; #Kills picom 
     -l) setsid -f picom ;; #Start with legacy backend
-    -n) PicomRestart --no-vsync ;; # No v-sync
+    -v) PicomRestart --vsync ;; # V-sync
     -r) PicomRestart ;; # Restarts
     '') if pgrep -x 'picom' >/dev/null ; then
             killall picom
