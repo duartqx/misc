@@ -29,7 +29,12 @@ def main() -> None:
     dolar: float = check_rate()
     try:
         arg_1 = argv[1]
-        if arg_1 == '--check': print(f'R${dolar:.2f}')
+        if arg_1 == '--help':
+            print('''Usage:
+    checkgains
+        prints out the dolar exchange rate for today in brl
+    checkgains [number|int|float]
+        prints out the gains calculated with today's exchange rate ''')
         else:
             try:
                 L = float(arg_1)
@@ -39,11 +44,7 @@ def main() -> None:
                 print('Argument must be a number')
                 sysexit(1)
     except IndexError:
-        print('''Usage:
-checkgains --check
-    prints out the dolar exchange rate for today in brl
-checkgains [number|int|float]
-    prints out the gains calculated with today's exchange rate ''')
+        print(f'R${dolar:.2f}')
 
 if __name__ == '__main__':
     
