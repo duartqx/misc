@@ -1,13 +1,13 @@
 #!/usr/bin/env bash
 
 Picom() {
-    setsid -f picom --experimental-backends $@
+    setsid -f picom "$@"
 }
 
 PicomRestart() {
     killall -q picom
     sleep 0.1
-    Picom $@
+    Picom "$@"
 }
 
 case $1 in
