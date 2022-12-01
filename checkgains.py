@@ -4,73 +4,82 @@ import sys
 from urllib.request import urlopen
 
 
-def __help() -> str:
-    return '''
-Usage:
-    checkgains
-        prints out the dolar exchange rate for today in brl
-    checkgains [number|int|float]
-        prints out the gains calculated with today's exchange rate 
-    '''
+class CheckGains:
 
-def check_rate(url: str) -> float:
-    ''' Returns the current rate of dolars in brl '''
-    return json.load(urlopen(url)).get('brl')
+    def __init__(self, *args) -> None:
+        self.DR = self.check_rate()
+        self.to_check = args
+        self.gains = self.__gains()
 
-def check_gains(L: float, DR: float) -> float:
-    '''
-        Returns L - 7% multiplied by the exchange rate (dolar) rounded to 2
-    '''
-    return round((L - (L * 0.07)) * DR, 2)
+    def check_rate(
+        self, url: str='https://cdn.jsdelivr.net/gh/fawazahmed0/currency' \
+                       '-api@1/latest/currencies/usd/brl.min.json'
+    ) -> float:
+        ''' Returns the current rate of dolars in brl '''
+        return json.load(urlopen(url)).get('brl')
 
-def gains(DR: float, *args) -> str:
+    def __help(self) -> str:
+        return '''
+    Usage:
+        checkgains
+            prints out the dolar exchange rate for today in brl
+        checkgains [number|int|float]
+            prints out the gains calculated with today's exchange rate
+        '''
 
-    __gains: str = ''
+    def __check_gains(self, L: float,) -> float:
+        '''
+            Returns L - 7% multiplied by the exchange rate (dolar)
+            rounded to 2
+        '''
+        return round((L - (L * 0.07)) * self.DR, 2)
 
-    if len(args) == 2:
+    def __gains(self) -> str:
 
-        for index, prefix in enumerate(('Pending', 'Total')):
-            L = float(args[index])
-            G: float = check_gains(L, DR)
-            __gains += f'{prefix} ${L} -> R${G}\n'
+        if '--help' in self.to_check:
+            return self.__help()
 
-        return __gains
-    else:
+        __gains: str = '\n'
 
-        for arg in args:
-            L = float(arg)
-            G = check_gains(L, DR)
-            __gains += f'${arg} -> R${G}\n'
+        if len(self.to_check) == 2:
 
-        return __gains
+            for index, prefix in enumerate(('Pending', 'Total')):
+                L = float(self.to_check[index])
+                G: float = self.__check_gains(L)
+                __gains += f'{prefix} ${L} -> R${G}\n'
 
-def main() -> None:
-    ''' Check dolar to brl exchange rate and prints out it minus paypal's
-        7% cut
-        Currency api provided for free at
-        https://github.com/fawazahmed0/currency-api
-    '''
-    CURRENCY_API_URL: str = 'https://cdn.jsdelivr.net/gh/fawazahmed0/' \
-                            'currency-api@1/latest/currencies/usd/brl.min.json' 
+            return __gains
+        else:
 
-    DOLAR_RATE: float = check_rate(CURRENCY_API_URL)
+            for l in self.to_check:
+                L = float(l)
+                G = self.__check_gains(L)
+                __gains += f'${l} -> R${G}\n'
 
-    args = sys.argv[1:]
-    if '--help' in args:
-        print(__help())
-    if not args:
-        print(f'R${DOLAR_RATE:.2f}')
-    else:
-        try:
-            print(gains(DOLAR_RATE, *args))
-        except ValueError:
-            print(
-                'Argument must be a number\n',
-                __help(),
-                file=sys.stderr
-            )
-            sys.exit(1)
+            return __gains
+
+    def __call__(self) -> None:
+        ''' Check dolar to brl exchange rate and prints out it minus paypal's
+            7% cut
+            Currency api provided for free at
+            https://github.com/fawazahmed0/currency-api
+        '''
+
+        if '--help' in self.to_check:
+            print(self.__help())
+        elif not self.to_check:
+            print(f'R${self.DR:.2f}')
+        else:
+            try:
+                print(self.gains)
+            except ValueError:
+                print(
+                    'Argument must be a number\n',
+                    self.__help(),
+                    file=sys.stderr
+                )
+                sys.exit(1)
 
 if __name__ == '__main__':
     
-    main()
+    CheckGains(*sys.argv[1:])()
