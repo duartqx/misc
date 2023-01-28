@@ -6,20 +6,20 @@
 # ffmpeg to the right audio device you want to record. Otherwise you might not
 # have audio on the recorded video.
 
-AUDIO_INPUT=`
+AUDIO_INPUT=$(
 case "$1" in
     -mic)
         printf 'default' ;;
     *)
         printf 'pulse' ;;
 esac
-`
+)
 
 if pgrep -x 'ffmpeg' > /dev/null ; then
     killall ffmpeg && notify-send 'Finished Capture'
 else
     ptoggle -o &&
     ffmpeg -f x11grab -video_size 1920x1080 -framerate 30 \
-    -i $DISPLAY -f alsa -i $AUDIO_INPUT -pix_fmt yuv420p \
-    -preset ultrafast $(date +"%a-%F-%H-%M-%S").mp4
+    -i "$DISPLAY" -f alsa -i "$AUDIO_INPUT" -pix_fmt yuv420p \
+    -preset ultrafast "$(date +'%a-%F-%H-%M-%S').mp4"
 fi
