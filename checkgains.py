@@ -8,6 +8,7 @@ class CheckGains:
 
     def __init__(self, *args) -> None:
         self.DR = self.check_rate()
+        self.__base_str = '${} =~ R${}\n'
         self.to_check = args
         self.gains = self.__gains()
 
@@ -34,28 +35,30 @@ class CheckGains:
         '''
         return round((L - (L * 0.07)) * self.DR, 2)
 
+    def __L_n_G(self, l) -> tuple[float, float]:
+        L = float(l)
+        G = self.__check_gains(L)
+        return L, G
+
     def __gains(self) -> str:
 
+        __gains: str = '\n'
         if '--help' in self.to_check:
             return self.__help()
 
-        __gains: str = '\n'
+        elif self.to_check and self.to_check[0] in ('-p', '--plus'):
+            l = sum((int(i) for i in self.to_check[1:]))
+            return '\n' + self.__base_str.format(*self.__L_n_G(l))
 
-        if len(self.to_check) == 2:
-
+        elif len(self.to_check) == 2:
             for index, prefix in enumerate(('Pending', 'Total')):
-                L = float(self.to_check[index])
-                G: float = self.__check_gains(L)
-                __gains += f'{prefix} ${L} -> R${G}\n'
-
+                L, G = self.__L_n_G(self.to_check[index])
+                __gains += ('{} ' + self.__base_str).format(prefix, L, G)
             return __gains
+
         else:
-
             for l in self.to_check:
-                L = float(l)
-                G = self.__check_gains(L)
-                __gains += f'${l} -> R${G}\n'
-
+                __gains += self.__base_str.format(*self.__L_n_G(l))
             return __gains
 
     def __call__(self) -> None:
