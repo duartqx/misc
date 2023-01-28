@@ -35,8 +35,8 @@ class CheckGains:
         '''
         return round((L - (L * 0.07)) * self.DR, 2)
 
-    def __L_n_G(self, l) -> tuple[float, float]:
-        L = float(l)
+    def __L_n_G(self, l: str) -> tuple[float, float]:
+        L = float(l if (isinstance(l, str) and l.isdigit()) else 0)
         G = self.__check_gains(L)
         return L, G
 
@@ -47,7 +47,7 @@ class CheckGains:
             return self.__help()
 
         elif self.to_check and self.to_check[0] in ('-p', '--plus'):
-            l = sum((int(i) for i in self.to_check[1:]))
+            l: str = str(sum((int(i) for i in self.to_check[1:])))
             return '\n' + self.__base_str.format(*self.__L_n_G(l))
 
         elif len(self.to_check) == 2:
