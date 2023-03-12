@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# Screenrecord using ffmpeg 
+# Screenrecord using ffmpeg
 # To record the audio "alsa -i default" will autopick the right audio server
 # you're using, works with pulseaudio and pipewire. To make it work, start
 # recording and on pavucontrol, or similar tool, on the recording tab change
@@ -7,19 +7,23 @@
 # have audio on the recorded video.
 
 AUDIO_INPUT=$(
-case "$1" in
+    case "$1" in
+
     -mic)
-        printf 'default' ;;
+        printf 'default'
+        ;;
     *)
-        printf 'pulse' ;;
-esac
+        printf 'pulse'
+        ;;
+
+    esac
 )
 
-if pgrep -x 'ffmpeg' > /dev/null ; then
+if pgrep -x 'ffmpeg' >/dev/null; then
     killall ffmpeg && notify-send 'Finished Capture'
 else
     ptoggle -o &&
-    ffmpeg -f x11grab -video_size 1920x1080 -framerate 30 \
-    -i "$DISPLAY" -f alsa -i "$AUDIO_INPUT" -pix_fmt yuv420p \
-    -preset ultrafast "$(date +'%a-%F-%H-%M-%S').mp4"
+        ffmpeg -f x11grab -video_size 1920x1080 -framerate 30 \
+            -i "$DISPLAY" -f alsa -i "$AUDIO_INPUT" -pix_fmt yuv420p \
+            -preset ultrafast "$(date +'%a-%F-%H-%M-%S').mp4"
 fi

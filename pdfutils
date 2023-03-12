@@ -1,9 +1,9 @@
 #!/usr/bin/env bash
 
-UND=`tput smul`
-NOUND=`tput rmul`
-BLD=`tput bold`
-NRML=`tput sgr0`
+UND=$(tput smul)
+NOUND=$(tput rmul)
+BLD=$(tput bold)
+NRML=$(tput sgr0)
 
 spinner() {
     # Prints a spinning line symbolizing that it's working
@@ -13,7 +13,7 @@ spinner() {
     echo -n ' '
     while [ -d /proc/$PID ]; do
         sleep 0.55
-        printf "\b${sp:i++%${#sp}:1}"
+        printf "\b%s" "${sp:i++%${#sp}:1}"
     done
     printf "\bDone\n"
 }
@@ -21,25 +21,25 @@ spinner() {
 pdfcompress() {
     # Compress image based PDF size
     gs -sDEVICE=pdfwrite \
-       -dCompatibilityLevel=1.4 \
-       -dDownsampleColorImages=true \
-       -dColorImageResolution=132 \
-       -dNOPAUSE -dBATCH \
-       -sOutputFile=${1%.pdf}_compressed_$(date +%s).pdf \
-       "$1" # The input file to be compressed
+        -dCompatibilityLevel=1.4 \
+        -dDownsampleColorImages=true \
+        -dColorImageResolution=132 \
+        -dNOPAUSE -dBATCH \
+        -sOutputFile="${1%.pdf}_compressed_$(date +%s).pdf" \
+        "$1" # The input file to be compressed
 }
 
 pdfsplit() {
     gs -sDEVICE=pdfwrite \
-       -dNOPAUSE -dBATCH -dSAFER \
-       -dFirstPage=${2} \
-       -dLastPage=${3} \
-       -sOutputFile=${1%.pdf}_p${2}-p${3}.pdf \
-       "$1" # The input file to be split
+        -dNOPAUSE -dBATCH -dSAFER \
+        -dFirstPage="${2}" \
+        -dLastPage="${3}" \
+        -sOutputFile="${1%.pdf}_p${2}-p${3}.pdf" \
+        "$1" # The input file to be split
 }
 
 cathelp() {
-    cat << _EOF
+    cat <<_EOF
 ${UND}NAME${NRML}
 pdfutils - Simple script to interact with Ghostscript and pdftoppm
 
@@ -61,19 +61,29 @@ OPT=$1
 shift
 
 case $OPT in
-    -c|--compress)
-        pdfcompress $1 & spinner ;;
-    -e|--extract) 
-        if [[ $1 =~ \.pdf$ ]]; then
-            echo 'Extracting png images from the input file'
-            pdftoppm -png $1 ${1%.pdf} & spinner
-        fi ;;
-    -s|--split) 
-        pdfsplit $@ & spinner ;;
-    -h|--help) 
-        cathelp ;;
-    *)
-        echo -e 'Invalid Option\n'
-        cathelp
-        exit 1 ;;
+
+-c | --compress)
+    pdfcompress "$1" &
+    spinner
+    ;;
+-e | --extract)
+    if [[ $1 =~ \.pdf$ ]]; then
+        echo 'Extracting png images from the input file'
+        pdftoppm -png "$1" "${1%.pdf}" &
+        spinner
+    fi
+    ;;
+-s | --split)
+    pdfsplit "$@" &
+    spinner
+    ;;
+-h | --help)
+    cathelp
+    ;;
+*)
+    echo -e 'Invalid Option\n'
+    cathelp
+    exit 1
+    ;;
+
 esac

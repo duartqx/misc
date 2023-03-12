@@ -11,15 +11,12 @@ PicomRestart() {
 }
 
 case $1 in
-    #-e) Picom --experimental-backends ;; # Experimental
-    -k) killall picom ;; #Kills picom 
-    -l) setsid -f picom ;; #Start with legacy backend
-    -v) PicomRestart --vsync ;; # V-sync
-    -r) PicomRestart ;; # Restarts
-    '') if pgrep -x 'picom' >/dev/null ; then
-            killall picom
-        else
-            Picom
-        fi ;; #Toggle
-    \?) echo "Error: Invalid option"; exit 1 ;;
+
+-k) killall picom ;;
+-l) setsid -f picom ;;
+-v) PicomRestart --vsync ;;
+-r) PicomRestart ;;
+'') if pgrep -x 'picom' >/dev/null; then killall picom else Picom; fi ;; #Toggle
+\?) echo "Error: Invalid option"; exit 1 ;;
+
 esac
