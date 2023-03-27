@@ -16,7 +16,7 @@ case $1 in
 -l) setsid -f picom ;;
 -v) PicomRestart --vsync ;;
 -r) PicomRestart ;;
-'') if pgrep -x 'picom' >/dev/null; then killall picom else Picom; fi ;; #Toggle
+'') if pgrep -x 'picom' >/dev/null; then killall picom; else Picom; fi ;; #Toggle
 \?) echo "Error: Invalid option"; exit 1 ;;
 
 esac
