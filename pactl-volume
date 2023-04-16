@@ -4,22 +4,16 @@ pactl_volume() {
     pactl set-sink-volume @DEFAULT_SINK@ "$1"
 }
 
+pactl_get_volume() {
+    pactl get-sink-volume @DEFAULT_SINK@ | awk -F '/' '{gsub(" +",""); printf $2}'
+}
+
 output_volume() {
     # Notification with current volume level
     XCPS='string:x-canonical-private-synchronous:SingleNotification'
-    notify-send -h "$XCPS" "🎶 Volume: $(
-        pactl get-sink-volume @DEFAULT_SINK@ |
-            awk -F '/' '{gsub(" +",""); printf $2}'
-    )"
+    notify-send -h "$XCPS" "🎶 Volume: $(pactl_get_volume)"
 }
 
-case $1 in
-up)
-    pactl_volume +1%
-    ;;
-down)
-    pactl_volume -1%
-    ;;
-esac
+_OP=$([[ $1 = up ]] && printf "+" || printf "-")
 
-output_volume
+pactl_volume "$_OP"1% && output_volume
