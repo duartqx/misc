@@ -36,7 +36,7 @@ class CheckGains:
         Returns L - 7% multiplied by the exchange rate (dolar)
         rounded to 2
         """
-        return round((L - (L * 0.07)) * self.DR, 2)
+        return round((L - (L * 0.12)) * self.DR, 2)
 
     def __L_n_G(self, l: str) -> tuple[float, float]:
         L = float(l if (isinstance(l, str) and l.isdigit()) else 0)
@@ -79,7 +79,11 @@ class CheckGains:
             try:
                 print(self.gains)
             except ValueError:
-                print("Argument must be a number\n", self.__help(), file=sys.stderr)
+                print(
+                    "Argument must be a number\n",
+                    self.__help(),
+                    file=sys.stderr,
+                )
                 sys.exit(1)
 
 
