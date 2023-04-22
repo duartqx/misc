@@ -77,6 +77,11 @@ case $OPT in
     pdfsplit "$@" &
     spinner
     ;;
+-u | --unite)
+    convert "$@" "$(date +'%a-%F-%H-%M-%S').pdf" &
+    spinner
+    ;;
+
 -h | --help)
     cathelp
     ;;
