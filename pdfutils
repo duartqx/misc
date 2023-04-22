@@ -50,6 +50,8 @@ ${UND}OPTIONS${NRML}
     Extracts all pages as png files
 -s|--split ${UND}pdf-file${NOUND} ${UND}first page of range${NOUND} ${UND}last page of range${NOUND}
     Splits a pdf file based on specified first and last page range into a new pdf file" 
+-u|--unite ${UND}pdf-file${NOUND}
+    Unites multiple image files into a single pdf file
 -h|--help
     Prints this help
 
