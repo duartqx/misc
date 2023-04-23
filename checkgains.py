@@ -89,4 +89,7 @@ class CheckGains:
 
 if __name__ == "__main__":
 
-    CheckGains(*sys.argv[1:])()
+    try:
+        CheckGains(*sys.argv[1:])()
+    except KeyboardInterrupt:
+        pass
