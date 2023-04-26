@@ -53,10 +53,9 @@ class CheckGains:
         return round((self.value - (self.value * 0.12)) * self.rate, 2)
 
     def __repr__(self) -> None:
-        """Check dolar to brl exchange rate and prints out it minus paypal's
-        7% cut
-        Currency api provided for free at
-        https://github.com/fawazahmed0/currency-api
+        """
+        Check dolar to brl exchange rate and prints out it minus paypal's 12% cut
+        Currency api provided for free at https://github.com/fawazahmed0/currency-api
         """
         if not self.args.value:
             return f"\n$1 =~ {self.rate:.2f}\n"
