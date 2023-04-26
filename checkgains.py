@@ -17,7 +17,7 @@ class CheckGains:
         )
         options = [
             {
-                "arg": ("value",),
+                "opt": ("value",),
                 "metavar": "value",
                 "type": int,
                 "nargs": "*",
@@ -25,7 +25,7 @@ class CheckGains:
             },
         ]
         for opt in options:
-            parser.add_argument(*opt.pop("arg"), **opt)
+            parser.add_argument(*opt.pop("opt"), **opt)
         args = parser.parse_args()
         return args
 
