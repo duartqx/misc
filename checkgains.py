@@ -17,8 +17,8 @@ class CheckGains:
         )
         options = [
             {
-                "opt": ("value",),
-                "metavar": "value",
+                "opt": ("values",),
+                "metavar": "values",
                 "type": int,
                 "nargs": "*",
                 "help": "integer accumulator",
@@ -30,19 +30,17 @@ class CheckGains:
         return args
 
     @cached_property
-    def rate(
-        self,
+    def rate(self) -> float:
+        """Returns the current rate of dolars in brl"""
         url: str = (
             "https://cdn.jsdelivr.net/gh/fawazahmed0/currency"
             "-api@1/latest/currencies/usd/brl.min.json"
-        ),
-    ) -> float:
-        """Returns the current rate of dolars in brl"""
+        )
         return json.load(urlopen(url)).get("brl")
 
     @cached_property
     def value(self) -> int:
-        return sum(self.args.value) if self.args.value else 1
+        return sum(self.args.values) if self.args.values else 1
 
     @cached_property
     def gains(self) -> float:
@@ -54,10 +52,11 @@ class CheckGains:
 
     def __repr__(self) -> None:
         """
-        Check dolar to brl exchange rate and prints out it minus paypal's 12% cut
-        Currency api provided for free at https://github.com/fawazahmed0/currency-api
+        Converts interger representing dolar values to brl minus paypal's
+        approximately 12% cut.
+        Currency rate source from: https://github.com/fawazahmed0/currency-api
         """
-        if not self.args.value:
+        if not self.args.values:
             return f"\n$1 =~ {self.rate:.2f}\n"
         return f"\n${self.value} =~ {self.gains}\n"
 
