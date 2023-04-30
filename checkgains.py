@@ -7,6 +7,7 @@ import json
 
 class CheckGains:
     def __init__(self) -> None:
+        self._repr = "CheckGains: <Value: %s; Rate: %s; Gains: %s;>"
         self.args = self._get_args()
 
     def _get_args(self) -> Namespace:
@@ -50,7 +51,7 @@ class CheckGains:
         """
         return round((self.value - (self.value * 0.12)) * self.rate, 2)
 
-    def __repr__(self) -> None:
+    def __str__(self) -> str:
         """
         Converts interger representing dolar values to brl minus paypal's
         approximately 12% cut.
@@ -59,6 +60,9 @@ class CheckGains:
         if not self.args.values:
             return f"\n$1 =~ {self.rate:.2f}\n"
         return f"\n${self.value} =~ {self.gains}\n"
+
+    def __repr__(self) -> str:
+        return self._repr % (self.value, self.rate, self.gains)
 
 
 if __name__ == "__main__":
