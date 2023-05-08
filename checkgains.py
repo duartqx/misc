@@ -1,34 +1,15 @@
 #!/usr/bin/env python
 from argparse import ArgumentParser, Namespace
 from functools import cached_property
+from typing import List
 from urllib.request import urlopen
 import json
 
 
 class CheckGains:
-    def __init__(self) -> None:
+    def __init__(self, values: List[int]) -> None:
         self._repr = "CheckGains: <Value: %s; Rate: %s; Gains: %s;>"
-        self.args = self._get_args()
-
-    def _get_args(self) -> Namespace:
-
-        parser = ArgumentParser(
-            prog="CheckGains",
-            description="Prints out the dolar exchange rate for today in brl.",
-        )
-        options = [
-            {
-                "opt": ("values",),
-                "metavar": "values",
-                "type": int,
-                "nargs": "*",
-                "help": "integer accumulator",
-            },
-        ]
-        for opt in options:
-            parser.add_argument(*opt.pop("opt"), **opt)
-        args = parser.parse_args()
-        return args
+        self.values = values
 
     @cached_property
     def rate(self) -> float:
@@ -41,7 +22,7 @@ class CheckGains:
 
     @cached_property
     def value(self) -> int:
-        return sum(self.args.values) if self.args.values else 1
+        return sum(self.values) if self.values else 1
 
     @cached_property
     def gains(self) -> float:
@@ -51,23 +32,53 @@ class CheckGains:
         """
         return round((self.value - (self.value * 0.12)) * self.rate, 2)
 
-    def __str__(self) -> str:
+    @cached_property
+    def display(self) -> str:
         """
         Converts interger representing dolar values to brl minus paypal's
         approximately 12% cut.
         Currency rate source from: https://github.com/fawazahmed0/currency-api
         """
-        if not self.args.values:
-            return f"\n$1 =~ {self.rate:.2f}\n"
-        return f"\n${self.value} =~ {self.gains}\n"
+        if not self.values:
+            return f"\n$1 =~ R${self.rate:.2f}\n"
+        return f"\n${self.value} =~ R${self.gains}\n"
+
+    def __str__(self) -> str:
+        return self.display
 
     def __repr__(self) -> str:
         return self._repr % (self.value, self.rate, self.gains)
 
 
-if __name__ == "__main__":
+def get_args() -> Namespace:
+
+    parser = ArgumentParser(
+        prog="CheckGains",
+        description="Prints out the dolar exchange rate for today in brl.",
+    )
+    options = [
+        {
+            "opt": ("values",),
+            "metavar": "values",
+            "type": int,
+            "nargs": "*",
+            "help": "integer accumulator",
+        },
+    ]
+    for opt in options:
+        parser.add_argument(*opt.pop("opt"), **opt)  # type: ignore
+    args = parser.parse_args()
+    return args
+
+
+def main() -> None:
 
     try:
-        print(CheckGains())
+        args: Namespace = get_args()
+        print(CheckGains(values=args.values))
     except KeyboardInterrupt:
         pass
+
+
+if __name__ == "__main__":
+    main()
